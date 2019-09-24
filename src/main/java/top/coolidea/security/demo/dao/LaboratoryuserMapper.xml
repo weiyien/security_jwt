@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.coolidea.security.demo.dao.LaboratoryuserMapper">
+
+    <resultMap id="BaseResultMap" type="top.coolidea.security.demo.entity.LaboratoryUser">
+        <id column="userid" jdbcType="INTEGER" property="userid"/>
+        <result column="usertypeid" jdbcType="INTEGER" property="usertypeid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="registetime" jdbcType="DATE" property="registetime"/>
+        <result column="alowable" jdbcType="BIT" property="alowable"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="identityid" jdbcType="INTEGER" property="identityid"/>
+    </resultMap>
+    <resultMap id="UserInfoResultMap" type="top.coolidea.security.demo.entity.UserInfoView">
+        <id column="userid" jdbcType="INTEGER" property="userid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="registetime" jdbcType="DATE" property="registetime"/>
+        <result column="alowable" jdbcType="BIT" property="alowable"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="remark2" jdbcType="VARCHAR" property="remark2"/>
+        <result column="userprofileid" jdbcType="INTEGER" property="userprofileid"/>
+        <result column="realname" jdbcType="VARCHAR" property="realname"/>
+        <result column="gender" jdbcType="BIT" property="gender"/>
+        <result column="cardno" jdbcType="VARCHAR" property="cardno"/>
+        <result column="idcardno" jdbcType="VARCHAR" property="idcardno"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="identityid" jdbcType="INTEGER" property="identityid"/>
+        <result column="identityname" jdbcType="VARCHAR" property="identityname"/>
+        <result column="usertype" jdbcType="VARCHAR" property="usertype"/>
+        <result column="usertypeid" jdbcType="INTEGER" property="usertypeid"/>
+        <result column="teacherid" jdbcType="INTEGER" property="teacherid"/>
+        <result column="company" jdbcType="VARCHAR" property="company"/>
+        <result column="studentno" jdbcType="VARCHAR" property="studentno"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    userid, usertypeid, username, password, registetime, alowable, remark,identityid
+  </sql>
+    <sql id="UserInfo_Column_List">
+        userid,username,password,registetime,alowable,remark,remark2,userprofileid,realname,gender,cardno,idcardno,
+        mobile,email,usertypeid,identityid,identityname,usertype,teacherid,company,studentno
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="UserInfoResultMap">
+        SELECT
+        <include refid="UserInfo_Column_List"/>
+        from "public"."v_user_info" u
+        where u.userid = #{id}
+    </select>
+    <select id="checkUserInfo" resultMap="UserInfoResultMap">
+        SELECT
+        <include refid="UserInfo_Column_List"/>
+        from (
+        SELECT
+        <include refid="UserInfo_Column_List"/>
+        FROM "public"."v_user_info" u
+        WHERE 1=1 and
+        (u.username = #{username,jdbcType=VARCHAR}
+        OR u.cardno = #{username,jdbcType=VARCHAR}
+        OR u.mobile = #{username,jdbcType=VARCHAR}
+        OR u.email = #{username,jdbcType=VARCHAR}
+        OR u.cardno = #{username,jdbcType=VARCHAR})
+        AND u.alowable='TRUE'
+        LIMIT 1
+        ) a
+
+    </select>
+    <select id="getUserInfoForJWT" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM "public"."laboratory_user"
+        WHERE username = #{username,jdbcType=VARCHAR}
+        AND alowable='TRUE'
+    </select>
+</mapper>
